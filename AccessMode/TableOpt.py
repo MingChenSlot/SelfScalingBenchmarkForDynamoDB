@@ -13,7 +13,7 @@ from boto.dynamodb2.fields import HashKey, RangeKey, AllIndex
 from boto.dynamodb2.types import STRING, NUMBER
 
 from BatchTable import BatchTable
-from DataModel import LogFileInfo
+from DataModel import RecordInfo
 
 from threading import Thread
 
@@ -28,6 +28,7 @@ class TableOpt(object):
         self.MAX_THREAD_COUNT = 40
         # Min number of tasks for each thread
         self.MIN_NUMBER_TASK_PER_THERAD = 500
+        self.record_size = 200
         
         self.conn        = conn
         self.table       = None
@@ -94,8 +95,8 @@ class TableOpt(object):
     
     def insert_records(self, numberOfRecords):
         for i in range(0, numberOfRecords):
-            log_file_info = LogFileInfo(self._create_log_file_url())
-            item_data  = log_file_info.get_log_file_info()
+            record = RecordInfo(self.record_size)
+            item_data  = record.get_record_info()
             self.table.put_item(item_data)
              
              

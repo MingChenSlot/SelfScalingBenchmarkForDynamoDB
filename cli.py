@@ -69,7 +69,7 @@ if __name__ == '__main__':
         tableOpt.delete_table()
 
     if options.number_of_records > 0:
-        tableOpt.multithread_insert(options.number_of_records)
+        tableOpt.insert_records(options.number_of_records)
     elif options.delete:
         tableOpt.batch_delete_records()
 
