@@ -4,5 +4,5 @@ Current available commands
     -i number_of_records        (insert specified number of records)
     -l                          (list all records)
     --count                     (return number of records in current table)
-    --count-page                (the size of page is 2MB, return number of records in each page)
+    --count-page                (the size of page is 1MB, return number of records in each page)
 
