@@ -93,13 +93,31 @@ class TableOpt(object):
         return log_file_url
     
     
-    def insert_records(self, numberOfRecords):
+    def insert_records(self, numberOfRecords, record_size):
+        if record_size == 0:
+            record_size = self.record_size
         for i in range(0, numberOfRecords):
-            record = RecordInfo(self.record_size)
+            record = RecordInfo(record_size)
             item_data  = record.get_record_info()
             self.table.put_item(item_data)
              
              
+    def get(self, key, range_key):
+        key = int(key)
+        record = self.table.get_item(PartitionID=key, FileName=range_key)
+        print 'FileName:' + record['FileName'] + "\tData:" + record['Data']
+       
+    def update(self, key, range_key, record_size):
+        key = int(key)
+        record = self.table.get_item(PartitionID=key, FileName=range_key)
+        if record_size == 0:
+            record_size = self.record_size
+        new_item = RecordInfo(record_size)
+        record['Data'] = new_item.get_record_info()['Data']
+        if record.save():
+            print "Done"
+     
+    
     # Used by packageDao, return log file index set; non-batch version
     def pkg_insert_helper(self, number_of_records, pkg_id):
         log_file_index_set = set()
@@ -198,22 +216,22 @@ class TableOpt(object):
     
     
     def delete_records(self):
-        log_files = self._scan_records() 
+        records = self._scan_records() 
         count = 0
-        for log in log_files:
-            log.delete()
+        for record in records:
+            record.delete()
             count += 1
         print "Delete " + str(count) + " items\n"
           
           
     def batch_delete_records(self):
-        log_files = self._scan_records() 
+        records = self._scan_records() 
         count     = 0  
         with BatchTable(self.table) as batch:
-            for log in log_files:
+            for record in records:
                 batch.delete_item(
-                    partitionIndex = log["partitionIndex"],
-                    logFileUrl = log["logFileUrl"]
+                    partitionIndex = record["partitionIndex"],
+                    logFileUrl = record["logFileUrl"]
                 )   
                 count += 1
         print "Delete " + str(count) + " items\n"

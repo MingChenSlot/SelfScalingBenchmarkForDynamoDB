@@ -32,16 +32,16 @@ class RecordInfo(BaseUtil):
         Constructor
         dummy data for our test table
         '''
-        ts = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime())
+        ts = strftime("%Y-%m-%dT%H:%M:%S", gmtime())
         PARTITION_COUNT = 13
         self.record = {}
         self.record['Data'] = "0"
         self.record["PartitionID"] = (self.java_string_hashcode(ts) & 0x7FFFFFFF) % PARTITION_COUNT
-        self.record["FileName"] = "TestFile_" + ts
-        self.record["version"] = 1
-        self.record["Size"] = size
-        self.record["LastModifiedTimestamp"] = ts
-        for i in range(0, size - 50):
+        self.record["FileName"] = "File_" + ts
+        # self.record["version"] = 1
+        # self.record["Size"] = size
+        # self.record["LastModifiedTimestamp"] = ts
+        for i in range(0, size - 29):
             self.record["Data"] = self.record["Data"] + "1";
     
     def get_record_info(self):

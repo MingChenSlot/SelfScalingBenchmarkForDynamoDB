@@ -29,6 +29,26 @@ if __name__ == '__main__':
     parser.add_option("--count", dest="is_count", 
                       action="store_true", default=False,
                       help="Count number of items for specified table")
+    parser.add_option("-s", "--size", dest="size_of_record", 
+                      type=int, action="store", metavar="int",
+                      help="Specify size of the record")
+    parser.add_option("--count-page", dest="count_page", 
+                      action="store_true", default=False, 
+                      help="Count number of items inside one page")
+    parser.add_option("-q", "--query", dest="query", 
+                      action="store_true", default=False,
+                      help="Query specific record")
+    parser.add_option("-u", "--update", dest="update", 
+                      action="store_true", default=False,
+                      help="Update specific record")
+    parser.add_option("-k", "--key", dest="key", 
+                      type=str, action="store",
+                      help="Key of the queried data")
+    parser.add_option("--rk", "--range_key", dest="range_key", 
+                      type=str, action="store",
+                      help="Range_key of the quried data")
+
+
     parser.add_option("--log", dest="log", action="store_true", default=False,
                       help="Operation on log file table")
     parser.add_option("-p", "--package", "--pkg", dest="pkg", action="store_true", 
@@ -40,9 +60,6 @@ if __name__ == '__main__':
     parser.add_option("--with-logcount", dest="log_count", metavar="str",  
                       action="store", type=str, 
                       help="Operation on log file table")
-    parser.add_option("--count-page", dest="count_page", 
-                      action="store_true", default=False, 
-                      help="Count number of items inside one page")
     parser.add_option("-a", "--account", dest="acct", default=False,
                       action="store_true", 
                       help="Operation on account information table")
@@ -52,6 +69,7 @@ if __name__ == '__main__':
     util = DataModel.BaseUtil()
     
     f = open("credential.json")
+    # f = open("c.json")
     credentials_str = f.read()
     credentials = CredentialsParser.CredentialsParser(credentials_str)
      
@@ -64,17 +82,26 @@ if __name__ == '__main__':
     tableOpt = TableOpt.TableOpt(conn, 
             credentials.credentials, 
             options.if_create_table)
+    
+    record_size = 0
+    if options.size_of_record:
+        record_size = options.size_of_record
 
     if options.delete_table:
         tableOpt.delete_table()
 
     if options.number_of_records > 0:
-        tableOpt.insert_records(options.number_of_records)
+        tableOpt.insert_records(options.number_of_records, record_size)
     elif options.delete:
         tableOpt.batch_delete_records()
+    elif options.query and options.key and options.range_key:
+        tableOpt.get(options.key, options.range_key)
+    elif options.update and options.key and options.range_key:
+        tableOpt.update(options.key, options.range_key, record_size)
 
     if options.list:
         tableOpt.list_records()    
+    
     if options.is_count:
         tableOpt.count_records()
 
