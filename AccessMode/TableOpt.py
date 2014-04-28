@@ -6,19 +6,18 @@ Created on April 17, 2014
 import time
 import uuid    
 import random
-import boto
 
 from boto.dynamodb2.table import Table
+from boto.dynamodb2.items import Item
 from boto.dynamodb2.fields import HashKey, RangeKey, AllIndex
 from boto.dynamodb2.types import STRING, NUMBER
 
 from BatchTable import BatchTable
-from DataModel import RecordInfo
+from DataModel import RecordInfo, BaseUtil
 
 from threading import Thread
 
 class TableOpt(object):
-      
     def __init__(self, conn, credentials, if_create_table):
         '''
         Constructor
@@ -28,7 +27,10 @@ class TableOpt(object):
         self.MAX_THREAD_COUNT = 40
         # Min number of tasks for each thread
         self.MIN_NUMBER_TASK_PER_THERAD = 500
+        # default record size
         self.record_size = 200
+        # util object
+        self.util = BaseUtil()
         
         self.conn        = conn
         self.table       = None
@@ -94,61 +96,44 @@ class TableOpt(object):
     
     
     def insert_records(self, numberOfRecords, record_size):
-        if record_size == 0:
+        if not record_size:
             record_size = self.record_size
         for i in range(0, numberOfRecords):
-            record = RecordInfo(record_size)
+            record = RecordInfo(record_size, i)
             item_data  = record.get_record_info()
             self.table.put_item(item_data)
              
              
-    def get(self, key, range_key):
-        key = int(key)
+    def get(self, range_key):
+        key = self.util.get_PartitionID(range_key)
         record = self.table.get_item(PartitionID=key, FileName=range_key)
-        print 'FileName:' + record['FileName'] + "\tData:" + record['Data']
+        print 'FileName:' + record['FileName'] + "\tSize" + record["Size"] + "\tData:" + record['Data']
        
-    def update(self, key, range_key, record_size):
-        key = int(key)
-        record = self.table.get_item(PartitionID=key, FileName=range_key)
-        if record_size == 0:
+    
+    def update(self, range_key, record_size):
+        key = self.util.get_PartitionID(range_key)
+        if not record_size:
             record_size = self.record_size
-        new_item = RecordInfo(record_size)
-        record['Data'] = new_item.get_record_info()['Data']
+        new_item = RecordInfo(record_size, 0)
+        record = self.table.get_item(PartitionID=key, FileName=range_key)
+        record["Size"] = new_item.get_record_info()['Size']
+        record["Data"] = new_item.get_record_info()['Data']
+        # new_item.set_PartitionID(key)
+        # new_item.set_FileName(range_key)
+        # new_record = new_item.get_record_info()
+        # record = Item(self.table, data=new_record)
         if record.save():
             print "Done"
-     
-    
-    # Used by packageDao, return log file index set; non-batch version
-    def pkg_insert_helper(self, number_of_records, pkg_id):
-        log_file_index_set = set()
-        for i in range(0, number_of_records):
-            log_file_info = LogFileInfo(self._create_log_file_url())
-            log_file_info.set_pkg_id(pkg_id)
-            item_data  = log_file_info.get_log_file_info()
-            self.table.put_item(data = item_data)
-            log_file_index_set.add(item_data["partitionIndex"])
-        return log_file_index_set
-    
-    
-    def batch_insert_records(self, number_of_records):
+   
+
+    def batch_insert_records(self, number_of_records, record_size):
+        if record_size == 0:
+            record_size = self.record_size
         with BatchTable(self.table) as batch:
             for i in range(0, number_of_records):
-                log_file_info = LogFileInfo(self._create_log_file_url())
-                item_data  = log_file_info.get_log_file_info()
+                record = RecordInfo(record_size, i)
+                item_data  = record.get_record_info()
                 batch.put_item(data = item_data)
-    
-    
-    #  Used by packageDao, return log file index set; batch version
-    def pkg_batch_insert_helper(self, number_of_records, pkg_id):
-        log_file_index_set = set()
-        with BatchTable(self.table) as batch:
-            for i in range(0, number_of_records):
-                log_file_info = LogFileInfo(self._create_log_file_url())
-                log_file_info.set_pkg_id(pkg_id)
-                item_data  = log_file_info.get_log_file_info()
-                batch.put_item(data = item_data)
-                log_file_index_set.add(item_data["partitionIndex"])
-        return log_file_index_set
     
     
     def multithread_insert(self, number_of_records):
@@ -226,12 +211,12 @@ class TableOpt(object):
           
     def batch_delete_records(self):
         records = self._scan_records() 
-        count     = 0  
+        count   = 0  
         with BatchTable(self.table) as batch:
             for record in records:
                 batch.delete_item(
-                    partitionIndex = record["partitionIndex"],
-                    logFileUrl = record["logFileUrl"]
+                    PartitionID = record["PartitionID"],
+                    FileName = record["FileName"]
                 )   
                 count += 1
         print "Delete " + str(count) + " items\n"

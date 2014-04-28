@@ -8,7 +8,7 @@ from Configuration import CredentialsParser
 from AccessMode import TableOpt, DataModel
 from optparse import OptionParser
 
-import boto.dynamodb2
+import AccessMode.boto.dynamodb2
 
 if __name__ == '__main__':
     usage = "usage: %prog [option1] arg1 [option2] arg2"
@@ -41,13 +41,9 @@ if __name__ == '__main__':
     parser.add_option("-u", "--update", dest="update", 
                       action="store_true", default=False,
                       help="Update specific record")
-    parser.add_option("-k", "--key", dest="key", 
+    parser.add_option("-k", "--key", "--rk", "--range_key", dest="key", 
                       type=str, action="store",
-                      help="Key of the queried data")
-    parser.add_option("--rk", "--range_key", dest="range_key", 
-                      type=str, action="store",
-                      help="Range_key of the quried data")
-
+                      help="Range key of the queried data")
 
     parser.add_option("--log", dest="log", action="store_true", default=False,
                       help="Operation on log file table")
@@ -66,14 +62,12 @@ if __name__ == '__main__':
    
     (options, args) = parser.parse_args()
     
-    util = DataModel.BaseUtil()
-    
     f = open("credential.json")
     # f = open("c.json")
     credentials_str = f.read()
     credentials = CredentialsParser.CredentialsParser(credentials_str)
      
-    conn = boto.dynamodb2.connect_to_region(
+    conn = AccessMode.boto.dynamodb2.connect_to_region(
         credentials.credentials["region"],
         aws_access_key_id = credentials.credentials["access_id"],
         aws_secret_access_key = credentials.credentials["access_key"]
@@ -94,10 +88,10 @@ if __name__ == '__main__':
         tableOpt.insert_records(options.number_of_records, record_size)
     elif options.delete:
         tableOpt.batch_delete_records()
-    elif options.query and options.key and options.range_key:
-        tableOpt.get(options.key, options.range_key)
-    elif options.update and options.key and options.range_key:
-        tableOpt.update(options.key, options.range_key, record_size)
+    elif options.query and options.key:
+        tableOpt.get(options.key)
+    elif options.update and options.key:
+        tableOpt.update(options.key, record_size)
 
     if options.list:
         tableOpt.list_records()    
