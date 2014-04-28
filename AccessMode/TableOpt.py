@@ -107,8 +107,14 @@ class TableOpt(object):
     def get(self, range_key):
         key = self.util.get_PartitionID(range_key)
         record = self.table.get_item(PartitionID=key, FileName=range_key)
-        print 'FileName:' + record['FileName'] + "\tSize" + record["Size"] + "\tData:" + record['Data']
+        print 'FileName:' + record['FileName'] + "\tSize" + str(record["Size"]) + "\tData:" + record['Data']
        
+    def range_get(self, key, ranges):
+        # required to provide hash key and range key for range search
+        records = self.table.query_2(PartitionID__eq=int(key), FileName__beginswith=ranges)
+        
+        for record in records:
+            print 'FileName:' + record['FileName'] + "\tSize" + str(record["Size"]) + "\tData:" + record['Data']
     
     def update(self, range_key, record_size):
         key = self.util.get_PartitionID(range_key)

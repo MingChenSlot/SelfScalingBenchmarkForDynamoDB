@@ -5,8 +5,11 @@ Current available commands
     -l                          (list all records)
     --count                     (return number of records in current table)
     --count-page                (the size of page is 1MB, return number of records in each page)
-    -q -k Partition_ID --range_key FileName
+    -d                          (delete all records)
+    -q --range_key FileName
                                 (query specific record)
-    -u -k Partition_ID --range_key FileName -s size_of_record
+    -q -k key --range_key FileNameBeginWith
+                                (query records with specific key and with file name started with provided string)
+    -u --range_key FileName -s size_of_record
                                 (update specific record with specified record size)
 

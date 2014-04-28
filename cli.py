@@ -41,7 +41,10 @@ if __name__ == '__main__':
     parser.add_option("-u", "--update", dest="update", 
                       action="store_true", default=False,
                       help="Update specific record")
-    parser.add_option("-k", "--key", "--rk", "--range_key", dest="key", 
+    parser.add_option("-k", "--key", dest="key", 
+                      type=str, action="store",
+                      help="key of the queried data")
+    parser.add_option("--rk", "--range_key", dest="range_key", 
                       type=str, action="store",
                       help="Range key of the queried data")
 
@@ -88,10 +91,12 @@ if __name__ == '__main__':
         tableOpt.insert_records(options.number_of_records, record_size)
     elif options.delete:
         tableOpt.batch_delete_records()
-    elif options.query and options.key:
-        tableOpt.get(options.key)
-    elif options.update and options.key:
-        tableOpt.update(options.key, record_size)
+    elif options.query and options.key and options.range_key:
+        tableOpt.range_get(options.key, options.range_key)
+    elif options.query and options.range_key:
+        tableOpt.get(options.range_key)
+    elif options.update and options.range_key:
+        tableOpt.update(options.range_key, record_size)
 
     if options.list:
         tableOpt.list_records()    
