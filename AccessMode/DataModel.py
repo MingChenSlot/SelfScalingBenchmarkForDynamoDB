@@ -40,7 +40,10 @@ class RecordInfo(BaseUtil):
         self.record["Data"] = "0"
         self.record["FileName"] = "File_" + ts + str(iteration)
         self._set_PartitionID()
-        self.record["Size"] = size
+        if size < 55:
+            self.record["Size"] = 55
+        else:
+            self.record["Size"] = size
         for i in range(0, size - 55):
             self.record["Data"] = self.record["Data"] + "1";
     

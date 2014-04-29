@@ -131,7 +131,7 @@ class TableOpt(object):
         # new_item.set_FileName(range_key)
         # new_record = new_item.get_record_info()
         # record = Item(self.table, data=new_record)
-        if record.save():
+        if record.partial_save():
             print "Done"
    
     def scan(self, record_size):
