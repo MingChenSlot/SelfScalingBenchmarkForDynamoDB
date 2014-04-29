@@ -12,4 +12,6 @@ Current available commands
                                 (query records with specific key and with file name started with provided string)
     -u --range_key FileName -s size_of_record
                                 (update specific record with specified record size)
+    --scan -s size_of_record
+                                (scan and filter all records with specified size)
 

@@ -47,6 +47,9 @@ if __name__ == '__main__':
     parser.add_option("--rk", "--range_key", dest="range_key", 
                       type=str, action="store",
                       help="Range key of the queried data")
+    parser.add_option("--scan", dest="scan", 
+                      action="store_true", default=False,
+                      help="Scan with filter on size of record")
 
     parser.add_option("--log", dest="log", action="store_true", default=False,
                       help="Operation on log file table")
@@ -97,6 +100,8 @@ if __name__ == '__main__':
         tableOpt.get(options.range_key)
     elif options.update and options.range_key:
         tableOpt.update(options.range_key, record_size)
+    elif options.scan and options.size_of_record:
+        tableOpt.scan(record_size)
 
     if options.list:
         tableOpt.list_records()    

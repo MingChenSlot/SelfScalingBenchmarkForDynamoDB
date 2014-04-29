@@ -102,19 +102,22 @@ class TableOpt(object):
             record = RecordInfo(record_size, i)
             item_data  = record.get_record_info()
             self.table.put_item(item_data)
+        print "done"
              
              
     def get(self, range_key):
         key = self.util.get_PartitionID(range_key)
         record = self.table.get_item(PartitionID=key, FileName=range_key)
-        print 'FileName:' + record['FileName'] + "\tSize" + str(record["Size"]) + "\tData:" + record['Data']
+        print 'FileName:' + record['FileName'] + "\tSize:" + str(record["Size"]) 
        
     def range_get(self, key, ranges):
         # required to provide hash key and range key for range search
         records = self.table.query_2(PartitionID__eq=int(key), FileName__beginswith=ranges)
-        
+        count = 0 
         for record in records:
-            print 'FileName:' + record['FileName'] + "\tSize" + str(record["Size"]) + "\tData:" + record['Data']
+            print 'FileName:' + record['FileName'] + "\tSize:" + str(record["Size"])
+            count += 1
+        print "# Records got: " + str(count)
     
     def update(self, range_key, record_size):
         key = self.util.get_PartitionID(range_key)
@@ -131,6 +134,13 @@ class TableOpt(object):
         if record.save():
             print "Done"
    
+    def scan(self, record_size):
+        records = self.table.scan(Size__eq=record_size, )
+        count = 0
+        for record in records:
+            print 'FileName:' + record['FileName'] + "\tSize:" + str(record["Size"]) 
+            count += 1
+        print "# Records got: " + str(count)
 
     def batch_insert_records(self, number_of_records, record_size):
         if record_size == 0:
@@ -140,6 +150,7 @@ class TableOpt(object):
                 record = RecordInfo(record_size, i)
                 item_data  = record.get_record_info()
                 batch.put_item(data = item_data)
+        print "done"
     
     
     def multithread_insert(self, number_of_records):
