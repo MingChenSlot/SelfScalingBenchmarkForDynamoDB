@@ -5,7 +5,7 @@ Created on April 17, 2014
 '''
   
 from Configuration import CredentialsParser
-from AccessMode import TableOpt, DataModel
+from AccessMode import TableOpt, DataModel, SimpleOpt
 from optparse import OptionParser
 
 import AccessMode.boto.dynamodb2
@@ -68,8 +68,7 @@ def process_args():
 
     return parser.parse_args()
 
-if __name__ == '__main__':
-
+def main():
     (options, args) = process_args()
 
     with open("credential.json") as f:
@@ -81,11 +80,11 @@ if __name__ == '__main__':
         aws_access_key_id = credentials.credentials["access_id"],
         aws_secret_access_key = credentials.credentials["access_key"]
     )
-     
-    tableOpt = TableOpt.TableOpt(conn, 
-            credentials.credentials, 
+
+    tableOpt = TableOpt.TableOpt(conn,
+            credentials.credentials,
             options.if_create_table)
-    
+
     record_size = 0
     if options.size_of_record:
         record_size = options.size_of_record
@@ -107,11 +106,34 @@ if __name__ == '__main__':
         tableOpt.scan(record_size)
 
     if options.list:
-        tableOpt.list_records()    
-    
+        tableOpt.list_records()
+
     if options.is_count:
         tableOpt.count_records()
 
     if options.count_page:
         tableOpt.count_one_page()
 
+
+def main2():
+    with open("credential.json") as f:
+        credentials_str = f.read()
+        credentials = CredentialsParser.CredentialsParser(credentials_str)
+
+    conn = AccessMode.boto.dynamodb2.connect_to_region(
+        credentials.credentials["region"],
+        aws_access_key_id = credentials.credentials["access_id"],
+        aws_secret_access_key = credentials.credentials["access_key"]
+    )
+
+    handle = SimpleOpt(
+        table='SelfScalingBenchTest',
+        conn=conn
+    )
+
+    keys = {'PartitionID': 1000, 'FileName': 'myfile'}
+
+    handle.get(keys)
+
+if __name__ == '__main__':
+    main2()
