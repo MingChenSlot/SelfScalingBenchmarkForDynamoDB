@@ -24,7 +24,7 @@ def main(args):
 
     rRead, rWrite, rUpdate = 50, 50, 0
     for read in [20, 40, 60, 80]:
-        write = 100-write
+        write = 100-read
         config = {'rRead':read, 'rWrite':write, 'rUpdate':0}
         c = BenchmarkConfig(config)
 
