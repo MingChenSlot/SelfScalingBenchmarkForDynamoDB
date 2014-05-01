@@ -14,11 +14,12 @@ class BenchmarkConfig:
 
         #total = sum([v for v in self.__dict__.keys() if v.startswith('r')])
 
+        self.benchmark = []
         for i in range(self.nRequests/2):
             self.benchmark.append(SimpleOpt.put)
         for i in range(self.nRequests/2):
             self.benchmark.append(SimpleOpt.get)
-        print len(self.benchmark)
+
 
     def generate_bench(self):
         pass
@@ -34,5 +35,4 @@ class BenchmarkConfig:
             i = (i+1)%(self.nRequests/2)
             op(handle, item)
         dt = time.time() - begin
-
-        print dt
+        print 'final = %f' % dt
