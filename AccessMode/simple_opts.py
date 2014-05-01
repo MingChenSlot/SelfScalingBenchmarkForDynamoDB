@@ -40,7 +40,7 @@ class SimpleOpt:
             key=keys,
             attributes_to_get=None,
             consistent_read=None)
-
+        
         print >>self.devnull, item['Item']['FileName'],
 
 

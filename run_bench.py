@@ -23,15 +23,17 @@ def main(args):
     )
 
     rRead, rWrite, rUpdate = 50, 50, 0
+    c = BenchmarkConfig(handle)
     for read in [20, 40, 60, 80]:
-        write = 100-read
+        write = 100 - read
         config = {'rRead':read, 'rWrite':write, 'rUpdate':0}
-        c = BenchmarkConfig(config)
-
+        c.generate_benchmark(config)
+        
         print
         print read, write, ':'
-        c.run_benchmark(handle)
+        c.run_benchmark()
         print
+    
 
 
 if __name__ == '__main__':
