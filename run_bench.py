@@ -30,7 +30,7 @@ def main(args):
         c.generate_benchmark(config)
         
         print
-        print read, write, ':'
+        print "Read:", read, "Write:", write, ':'
         c.run_benchmark()
         print
     
