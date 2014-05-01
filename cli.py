@@ -115,25 +115,5 @@ def main():
         tableOpt.count_one_page()
 
 
-def main2():
-    with open("credential.json") as f:
-        credentials_str = f.read()
-        credentials = CredentialsParser.CredentialsParser(credentials_str)
-
-    conn = AccessMode.boto.dynamodb2.connect_to_region(
-        credentials.credentials["region"],
-        aws_access_key_id = credentials.credentials["access_id"],
-        aws_secret_access_key = credentials.credentials["access_key"]
-    )
-
-    handle = SimpleOpt(
-        table='SelfScalingBenchTest',
-        conn=conn
-    )
-
-    keys = {'PartitionID': 1000, 'FileName': 'myfile'}
-
-    handle.get(keys)
-
 if __name__ == '__main__':
-    main2()
+    main()
