@@ -38,8 +38,8 @@ class RecordInfo(BaseUtil):
         self.PARTITION_COUNT = 13
         self.record = {}
         self.record["Data"] = "0"
-        self.record["FileName"] = "File_" + ts + str(iteration)
-        self._set_PartitionID()
+        self.record["FileName"] = "File_%020d" % iteration
+        self.record["PartitionID"] = iteration
         if size < 55:
             self.record["Size"] = 55
         else:
@@ -55,6 +55,12 @@ class RecordInfo(BaseUtil):
 
     def set_FileName(self, FileName):
         self.record["FileName"] = FileName
+
+    def get_key_record_items(self):
+        t = {}
+        t['PartitionID'] = self.record['PartitionID']
+        t['FileName'] = self.record['FileName']
+        return t
 
     def _set_PartitionID(self):
         if "FileName" not in self.record:

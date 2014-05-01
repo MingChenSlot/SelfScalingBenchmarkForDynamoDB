@@ -1,9 +1,12 @@
 from boto.dynamodb.types import dynamize_value
+import os
 
 class SimpleOpt:
     def __init__(self, table, conn):
         self.table = table
         self.conn = conn
+
+        self.devnull = open(os.devnull, 'w')
 
     def encode(self, item):
         for key, value in item.items():
@@ -30,7 +33,7 @@ class SimpleOpt:
         """
         @param keys a dict object representing attributes; must contain the primary key
         """
-        keys = self.encode(keys)
+        keys = self.encode({'PartitionID':keys['PartitionID'], 'FileName':keys['FileName']})
 
         item = self.conn.get_item(
             table_name=self.table,
@@ -38,7 +41,8 @@ class SimpleOpt:
             attributes_to_get=None,
             consistent_read=None)
 
-        print item
+        print >>self.devnull, item['Item']['FileName'],
+
 
     def update(self, keys, values):
         """

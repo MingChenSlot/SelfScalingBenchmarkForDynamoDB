@@ -1,10 +1,12 @@
-from Configuration import CredentialsParser
+from Configuration import CredentialsParser, BenchmarkConfig
 from AccessMode import SimpleOpt
 from optparse import OptionParser
 
+import sys
+
 import AccessMode.boto.dynamodb2
 
-def main():
+def main(args):
     with open("credential.json") as f:
         credentials_str = f.read()
         credentials = CredentialsParser.CredentialsParser(credentials_str)
@@ -20,9 +22,17 @@ def main():
         conn=conn
     )
 
-    keys = {'PartitionID': 1001, 'FileName': 'myfile'}
-    # handle.put(keys)
-    handle.update(keys, {'Data':'RW', 'Size':'12'})
+    rRead, rWrite, rUpdate = 50, 50, 0
+    for read in [20, 40, 60, 80]:
+        write = 100-write
+        config = {'rRead':read, 'rWrite':write, 'rUpdate':0}
+        c = BenchmarkConfig(config)
+
+        print
+        print read, write, ':'
+        c.run_benchmark(handle)
+        print
+
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
