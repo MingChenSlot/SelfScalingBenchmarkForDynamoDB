@@ -5,6 +5,7 @@ from AccessMode import DataModel
 
 class BenchmarkConfig:
     def __init__(self, handle):
+        self.recordSize = 1024
         self.nRequests = 10
 
         self.readBase = 0
@@ -19,9 +20,11 @@ class BenchmarkConfig:
         self.__set_up_benchmark()
 
     def __set_up_benchmark(self):
+        items = []
         for i in range(self.nRequests):
-            item = DataModel.RecordInfo(1024, self.readBase+i).get_record_info()
-            SimpleOpt.put(self.handle, item)
+            item = DataModel.RecordInfo(self.recordSize, self.readBase+i).get_record_info()
+            items.append(item)
+        SimpleOpt.batch_put(self.handle, items)
 
     def generate_benchmark(self, config):
         # All ratios are out of 100
@@ -39,7 +42,6 @@ class BenchmarkConfig:
         for i in range(self.nRequests * self.rUpdate / 100):
             self.benchmark.append(SimpleOpt.update)
 
-
     def run_benchmark(self):
         i = 0
         begin = time.time()
@@ -48,9 +50,9 @@ class BenchmarkConfig:
                 print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/self.nRequests, time.time() - begin),
 
             if op in self.readSet:
-                item = DataModel.RecordInfo(1024, i + self.readBase).get_record_info()
+                item = DataModel.RecordInfo(self.recordSize, i + self.readBase).get_record_info()
             elif op in self.writeSet:
-                item = DataModel.RecordInfo(1024, i + self.writeBase).get_record_info()
+                item = DataModel.RecordInfo(self.recordSize, i + self.writeBase).get_record_info()
             else:
                raise Exception("unrecognizable operation")
             

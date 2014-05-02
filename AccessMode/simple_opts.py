@@ -1,4 +1,6 @@
 from boto.dynamodb.types import dynamize_value
+from boto.dynamodb2.table import BatchTable
+from boto.dynamodb2.table import Table
 import os
 
 class SimpleOpt:
@@ -17,6 +19,11 @@ class SimpleOpt:
         for key, value in attribs.items():
             attribs[key] = {'Value': dynamize_value(value)}
         return attribs
+
+    def batch_put(self, items):
+        with BatchTable(Table(self.table, connection = self.conn)) as batch:
+            for item in items:
+                batch.put_item(data=item)
 
     def put(self, item):
         """
