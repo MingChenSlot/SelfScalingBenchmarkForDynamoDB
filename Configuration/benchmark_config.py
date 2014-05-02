@@ -4,9 +4,9 @@ from AccessMode import SimpleOpt
 from AccessMode import DataModel
 
 class BenchmarkConfig:
-    def __init__(self, handle, nRequests=100):
-        self.recordSize = 1024 # default record size
-        self.nRequests = nRequests
+    def __init__(self, handle, nRequests=1024, rSize=1024):
+        self.recordSize = rSize # default record size
+        self.nRequests = nRequests # default # of requests
 
         self.readBase = 0
         self.writeBase = self.nRequests
@@ -27,20 +27,20 @@ class BenchmarkConfig:
         SimpleOpt.batch_put(self.handle, items)
 
 
-    def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024):
+    def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024, nRequests=1024):
         # All ratios are out of 100
         self.rRead = rRead
         self.rWrite = rWrite
         self.rUpdate = rUpdate
 
-        self.writeBase += self.nRequests
+        self.writeBase += nRequests
 
         self.benchmark = []
-        for i in range(self.nRequests * self.rWrite / 100):
+        for i in range(nRequests * self.rWrite / 100):
             self.benchmark.append(SimpleOpt.put)
-        for i in range(self.nRequests * self.rRead / 100):
+        for i in range(nRequests * self.rRead / 100):
             self.benchmark.append(SimpleOpt.get)
-        for i in range(self.nRequests * self.rUpdate / 100):
+        for i in range(nRequests * self.rUpdate / 100):
             self.benchmark.append(SimpleOpt.update)
 
         if rSize == self.recordSize:
@@ -53,13 +53,15 @@ class BenchmarkConfig:
                     {'PartitionID':item['PartitionID'], 'FileName':item['FileName']},
                     {'Data':item['Data'], 'Size':item['Size']})
 
+        
 
     def run_benchmark(self):
         i = 0
+        nRequests = len(self.benchmark)
         begin = time.time()
         for op in self.benchmark:
             if i%20 == 0:
-                print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/self.nRequests, time.time() - begin),
+                print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
 
             if op in self.readSet:
                 item = DataModel.RecordInfo(self.recordSize, i + self.readBase).get_record_info()
@@ -73,6 +75,29 @@ class BenchmarkConfig:
 
         dt = time.time() - begin
         print 'final = %f' % dt
-        print 'throughput = %f' % ((self.recordSize * self.nRequests) / 1024 / dt)
+        print 'throughput = %f KB/s' % ((self.recordSize * nRequests) / 1024 / dt)
 
+
+    def run_benchmark_repeated_read(self):
+    # repeated read the default # of requests
+        i = 0
+        nRequests = len(self.benchmark)
+        begin = time.time()
+        for op in self.benchmark:
+            if i%20 == 0:
+                print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
+
+            if op in self.readSet:
+                item = DataModel.RecordInfo(self.recordSize, (i + self.readBase) % self.nRequests).get_record_info()
+            elif op in self.writeSet:
+                item = DataModel.RecordInfo(self.recordSize, i + self.writeBase).get_record_info()
+            else:
+               raise Exception("unrecognizable operation")
+
+            op(self.handle, item)
+            i += 1
+
+        dt = time.time() - begin
+        print 'final = %f' % dt
+        print 'throughput = %f KB/s' % ((self.recordSize * nRequests) / 1024 / dt)
 
