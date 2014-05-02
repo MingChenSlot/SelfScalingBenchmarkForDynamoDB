@@ -4,10 +4,9 @@ from AccessMode import SimpleOpt
 from AccessMode import DataModel
 
 class BenchmarkConfig:
-    def __init__(self, handle):
+    def __init__(self, handle, nRequests=100):
         self.recordSize = 1024 # default record size
-
-        self.nRequests = 10
+        self.nRequests = nRequests
 
         self.readBase = 0
         self.writeBase = self.nRequests
@@ -74,6 +73,6 @@ class BenchmarkConfig:
 
         dt = time.time() - begin
         print 'final = %f' % dt
-        print 'throughput = %f' % ((self.recordSize * self.nRequests) / dt)
+        print 'throughput = %f' % ((self.recordSize * self.nRequests) / 1024 / dt)
 
 

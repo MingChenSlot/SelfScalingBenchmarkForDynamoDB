@@ -21,7 +21,7 @@ def main(args):
         table='SelfScalingBenchTest',
         conn=conn
     )
-
+    
     c = BenchmarkConfig(handle)
 
     # use read portion, write portion as parameters
@@ -45,6 +45,19 @@ def main(args):
         c.run_benchmark()
         print
     
+    # vary total size (100K, 1M, 64M, 256M, 512M)
+    # for nRequests in [100, 1024, 64 * 1024, 256 * 1024, 512 * 1024]:
+    for nRequests in [100, 200]:
+        params = {'nRequests':nRequests}
+        c = BenchmarkConfig(handle, **params)
+        c.generate_benchmark()
+       
+        print
+        print "Total Size:", nRequests * c.recordSize, ':'
+        c.run_benchmark()
+        print
+
+        
 
 
 if __name__ == '__main__':
