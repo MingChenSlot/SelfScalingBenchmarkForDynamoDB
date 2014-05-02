@@ -36,18 +36,18 @@ def main(args):
     #     print
 
     # use record size as parameter
-    for size in [512, 1024, 2048, 4096, 8192]:
-        params = {'rSize':size}
-        c.generate_benchmark(**params)
+    # for size in [512, 1024, 2048, 4096, 8192]:
+    #     params = {'rSize':size}
+    #     c.generate_benchmark(**params)
         
-        print
-        print "RecordSize:", size, ':'
-        c.run_benchmark()
-        print
+    #     print
+    #     print "RecordSize:", size, ':'
+    #     c.run_benchmark()
+    #     print
     
     # vary total size (100K, 1M, 64M, 256M, 512M)
-    # for nRequests in [100, 1024, 64 * 1024, 256 * 1024, 512 * 1024]:
-    for nRequests in [100, 200]:
+    for nRequests in [100, 1024, 64 * 1024, 256 * 1024, 512 * 1024]:
+    # for nRequests in [100, 200]:
         params = {'nRequests':nRequests}
         c = BenchmarkConfig(handle, **params)
         c.generate_benchmark()
