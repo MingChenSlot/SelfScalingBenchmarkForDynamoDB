@@ -7,7 +7,7 @@ class BenchmarkConfig:
     def __init__(self, handle):
         self.recordSize = 1024 # default record size
 
-        self.nRequests = 50
+        self.nRequests = 10
 
         self.readBase = 0
         self.writeBase = self.nRequests
@@ -26,6 +26,7 @@ class BenchmarkConfig:
             item = DataModel.RecordInfo(self.recordSize, self.readBase+i).get_record_info()
             items.append(item)
         SimpleOpt.batch_put(self.handle, items)
+
 
     def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024):
         # All ratios are out of 100
@@ -73,5 +74,6 @@ class BenchmarkConfig:
 
         dt = time.time() - begin
         print 'final = %f' % dt
+        print 'throughput = %f' % ((self.recordSize * self.nRequests) / dt)
 
 
