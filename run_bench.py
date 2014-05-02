@@ -22,15 +22,26 @@ def main(args):
         conn=conn
     )
 
-    rRead, rWrite, rUpdate = 50, 50, 0
     c = BenchmarkConfig(handle)
-    for read in [20, 40, 60, 80]:
-        write = 100 - read
-        config = {'rRead':read, 'rWrite':write, 'rUpdate':0}
-        c.generate_benchmark(config)
+
+    # use read portion, write portion as parameters
+    # for read in [20, 40, 60, 80]:
+    #     write = 100 - read
+    #     params = {'rRead':read, 'rWrite':write, 'rUpdate':0}
+    #     c.generate_benchmark(**params)
+    
+    #     print
+    #     print "Read:", read, "Write:", write, ':'
+    #     c.run_benchmark()
+    #     print
+
+    # use record size as parameter
+    for size in [512, 1024, 2048, 4096, 8192]:
+        params = {'rSize':size}
+        c.generate_benchmark(**params)
         
         print
-        print "Read:", read, "Write:", write, ':'
+        print "RecordSize:", size, ':'
         c.run_benchmark()
         print
     
