@@ -7,14 +7,15 @@ import sys
 import AccessMode.boto.dynamodb2
 
 def main(args):
-    with open("credential.json") as f:
-        credentials_str = f.read()
-        credentials = CredentialsParser.CredentialsParser(credentials_str)
+    # with open("credential.json") as f:
+    #     credentials_str = f.read()
+    #     credentials = CredentialsParser.CredentialsParser(credentials_str)
 
     conn = AccessMode.boto.dynamodb2.connect_to_region(
-        credentials.credentials["region"],
-        aws_access_key_id = credentials.credentials["access_id"],
-        aws_secret_access_key = credentials.credentials["access_key"]
+        'us-west-2'
+        # credentials.credentials["region"],
+        # aws_access_key_id = credentials.credentials["access_id"],
+        # aws_secret_access_key = credentials.credentials["access_key"]
     )
 
     handle = SimpleOpt(
@@ -22,7 +23,8 @@ def main(args):
         conn=conn
     )
     
-    config = {'nRequests':1024}
+    # config = {'nRequests':1024}
+    config = {'nRequests':100}
     c = BenchmarkConfig(handle, **config)
 
     # c = BenchmarkConfig(handle)
@@ -49,8 +51,8 @@ def main(args):
     #     print
     
     # vary total size (1M, 32M, 64M, 128M, 256M)
-    # for nRequests in [100, 200]:
-    for nRequests in [1024, 32 * 1024, 64 * 1024, 128 * 1024, 256 * 1024]:
+    for nRequests in [100, 200]:
+    # for nRequests in [1024, 32 * 1024, 64 * 1024, 128 * 1024, 256 * 1024]:
         params = {'nRequests':nRequests}
         c.generate_benchmark(**params)
        
