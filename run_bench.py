@@ -2,6 +2,7 @@ from Configuration import CredentialsParser, BenchmarkConfig
 from AccessMode import SimpleOpt
 from optparse import OptionParser
 
+import config
 import sys
 
 import AccessMode.boto.dynamodb2
@@ -12,7 +13,7 @@ def main(args):
     #     credentials = CredentialsParser.CredentialsParser(credentials_str)
 
     conn = AccessMode.boto.dynamodb2.connect_to_region(
-        'us-west-2'
+        config.region
         # credentials.credentials["region"],
         # aws_access_key_id = credentials.credentials["access_id"],
         # aws_secret_access_key = credentials.credentials["access_key"]

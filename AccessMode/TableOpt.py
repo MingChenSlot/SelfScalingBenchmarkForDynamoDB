@@ -18,7 +18,7 @@ from DataModel import RecordInfo, BaseUtil
 from threading import Thread
 
 class TableOpt(object):
-    def __init__(self, conn, credentials, if_create_table):
+    def __init__(self, conn, table_name, if_create_table):
         '''
         Constructor
         '''
@@ -34,8 +34,7 @@ class TableOpt(object):
         
         self.conn        = conn
         self.table       = None
-        self.credentials = credentials
-        self.table_name  =  self.credentials[self.TABLE_NAME]
+        self.table_name  =  table_name
         
 #         boto.set_file_logger('boto', './logs/logLogFile', 'DEBUG')
         
@@ -83,17 +82,6 @@ class TableOpt(object):
             print e 
             print "Create " + self.TABLE_NAME + " failed\n"
         
-        
-    def _create_log_file_url(self):
-        # Create random unique log file url
-        magic_time = int(time.time())
-        rand = random.randint(1, 100000)
-        log_file_url = "s3n://eagle-us-east-1-cheming-eaglembs//Eagle/eaglegen-us-east-1/EagleService/RDS-TEST/" \
-                         + self.credentials["s3_bucket_name"] + \
-                         str(id(magic_time)) + str(rand) + str(uuid.uuid4()) + \
-                         ".gz"
-        return log_file_url
-    
     
     def insert_records(self, numberOfRecords, record_size):
         if not record_size:

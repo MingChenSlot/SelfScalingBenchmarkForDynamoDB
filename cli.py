@@ -8,7 +8,8 @@ from Configuration import CredentialsParser
 from AccessMode import TableOpt, DataModel, SimpleOpt
 from optparse import OptionParser
 
-import AccessMode.boto.dynamodb2
+import boto.dynamodb2
+import config
 
 def process_args():
     usage = "usage: %prog [option1] arg1 [option2] arg2"
@@ -71,18 +72,12 @@ def process_args():
 def main():
     (options, args) = process_args()
 
-    with open("credential.json") as f:
-        credentials_str = f.read()
-        credentials = CredentialsParser.CredentialsParser(credentials_str)
-
-    conn = AccessMode.boto.dynamodb2.connect_to_region(
-        credentials.credentials["region"],
-        aws_access_key_id = credentials.credentials["access_id"],
-        aws_secret_access_key = credentials.credentials["access_key"]
+    conn = boto.dynamodb2.connect_to_region(
+        config.region
     )
 
     tableOpt = TableOpt.TableOpt(conn,
-            credentials.credentials,
+            config.table_name,
             options.if_create_table)
 
     record_size = 0
