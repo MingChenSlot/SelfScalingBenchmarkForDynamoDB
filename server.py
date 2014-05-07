@@ -46,7 +46,7 @@ def main(argv):
     # hosts = [config.master, ]
     print hosts
     
-    params = {'nRequests':(workload/(len(hosts)))}
+    params = {'nRequests':(workload/number_of_instances)}
     c = BenchmarkConfig(handle, **params)
 
     msg = {'cmd':'start', 'workload':(workload / number_of_instances)}
