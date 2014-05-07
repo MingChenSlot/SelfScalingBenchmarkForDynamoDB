@@ -36,7 +36,7 @@ def main(argv):
         if 'cmd' not in msg:
             connect.send('unknown information')
         elif msg['cmd'] == 'start' and 'workload' in msg and 'writeBase' in msg:
-            params = {'nRequests':msg['workload']}
+            params = {'nRequests':msg['workload'], 'writeBase':msg['writeBase']}
             c.generate_benchmark(**params)
             c.run_benchmark()
             connect.send('done')
