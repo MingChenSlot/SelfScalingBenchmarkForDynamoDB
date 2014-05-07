@@ -5,14 +5,14 @@ from optparse import OptionParser
 import config
 import sys
 
-import AccessMode.boto.dynamodb2
+import boto.dynamodb2
 
 def main(args):
     # with open("credential.json") as f:
     #     credentials_str = f.read()
     #     credentials = CredentialsParser.CredentialsParser(credentials_str)
 
-    conn = AccessMode.boto.dynamodb2.connect_to_region(
+    conn = boto.dynamodb2.connect_to_region(
         config.region
         # credentials.credentials["region"],
         # aws_access_key_id = credentials.credentials["access_id"],
@@ -20,7 +20,7 @@ def main(args):
     )
 
     handle = SimpleOpt(
-        table='SelfScalingBenchTest',
+        config.table_name,
         conn=conn
     )
     

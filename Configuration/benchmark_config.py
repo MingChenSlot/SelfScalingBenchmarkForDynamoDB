@@ -4,7 +4,7 @@ from AccessMode import SimpleOpt
 from AccessMode import DataModel
 
 class BenchmarkConfig:
-    def __init__(self, handle, nRequests=1024, rSize=1024):
+    def __init__(self, handle, nRequests=1024, rSize=1024, setup=1):
         self.recordSize = rSize # default record size
         self.nRequests = nRequests # default # of requests
 
@@ -17,7 +17,8 @@ class BenchmarkConfig:
         #total = sum([v for v in self.__dict__.keys() if v.startswith('r')])
 
         # set up the read set
-        self.__set_up_benchmark()
+        if setup:
+            self.__set_up_benchmark()
 
     def __set_up_benchmark(self):
         items = []
@@ -27,13 +28,16 @@ class BenchmarkConfig:
         SimpleOpt.batch_put(self.handle, items)
 
 
-    def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024, nRequests=1024):
+    def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024, nRequests=1024, writeBase=0):
         # All ratios are out of 100
         self.rRead = rRead
         self.rWrite = rWrite
         self.rUpdate = rUpdate
-
-        self.writeBase += nRequests
+        
+        if writeBase == 0:
+            self.writeBase += nRequests
+        else:
+            self.writeBase = writebase
 
         self.benchmark = []
         for i in range(nRequests * self.rWrite / 100):
@@ -52,8 +56,6 @@ class BenchmarkConfig:
             SimpleOpt.update(self.handle,
                     {'PartitionID':item['PartitionID'], 'FileName':item['FileName']},
                     {'Data':item['Data'], 'Size':item['Size']})
-
-        
 
     def run_benchmark(self):
         i = 0
