@@ -24,7 +24,7 @@ def main(argv):
     c = BenchmarkConfig(handle, **params)
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((socket.gethostname(), config.port))
+    s.bind(('0.0.0.0', config.port))
     s.listen(config.port)
 
     while True:

@@ -19,10 +19,12 @@ def get_hosts(state='running'):
     for reservation in connection.get_all_instances():
         for instance in reservation.instances:
             if instance.state == state:
+                # hosts.append(instance.private_ip_address)
+                # hosts.append(instance.public_dns_name)
                 for key in ['role']:
                     value = instance.tags.get(key)
                     if value and role in value.split(','):
-                        hosts.append(instance.ip_address)
+                        hosts.append(instance.public_dns_name)
                         break
     return hosts
 
@@ -41,7 +43,7 @@ def main(argv):
     number_of_instances = int(argv[3])
     hosts = get_hosts()
     # hosts = ['127.0.0.1', ]
-    hosts = [config.master, ]
+    # hosts = [config.master, ]
     print hosts
     
     params = {'nRequests':(workload/(len(hosts))), 'setup':0}
