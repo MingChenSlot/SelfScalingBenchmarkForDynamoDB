@@ -37,14 +37,11 @@ def main(argv):
         conn=conn
     )
     
-    if len(argv) != 3:
-        print 'usage: python program.py workload number_instances'
-        return
-    workload = int(argv[1])
-    number_of_instances = int(argv[2])
+    workload = int(argv[2])
+    number_of_instances = int(argv[3])
     hosts = get_hosts()
     # print hosts
-    # hosts = ['127.0.0.1', ]
+    hosts = ['127.0.0.1', ]
     
     params = {'nRequests':(workload/(len(hosts))), 'setup':0}
     c = BenchmarkConfig(handle, **params)
@@ -73,20 +70,32 @@ def main(argv):
         feedback = s.recv(config.receive_up)  
         if not feedback.startswith('done'):
             print 'Error: ', feedback
+        s.close()
 
     dt = time.time() - begin
     print 'final = %f' % dt
     print 'throughput = %f KB/s' % ((1024 * workload) / 1024 / dt)
     
-    msg = {}
+
+def end_server():
+    hosts = get_hosts()
+    hosts = ['127.0.0.1', ]
     msg = {'cmd':'end', }
-    for s in waits:
+    for host in hosts:
         try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, config.port))
             s.send(pickle.dumps(msg))
             s.close()
         except socket.error, message:
             print 'end ', host, ' failed with ', message
-
+    print 'End all clients'
 
 if __name__ == '__main__':
-    main(sys.argv)
+    if sys.argv[1] == '--end':
+        end_server()
+    elif sys.argv[1] == '--start':
+        if len(sys.argv) != 4:
+            print 'usage: python program.py [--start --end] workload number_instances'
+            exit(0)
+        main(sys.argv)

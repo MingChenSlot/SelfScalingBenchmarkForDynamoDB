@@ -27,9 +27,9 @@ def main(argv):
     s.bind(('', config.port))
     s.listen(config.port)
 
-    connect, addr = s.accept()
-    print "receive request from %s" % str(addr)
     while True:
+        connect, addr = s.accept()
+        print "receive request from %s" % str(addr)
         raw_msg = connect.recv(config.receive_up)
         print pickle.loads(raw_msg)
         msg = pickle.loads(raw_msg) # receive up to 2K bytes
