@@ -22,7 +22,7 @@ def get_hosts(state='running'):
                 for key in ['role']:
                     value = instance.tags.get(key)
                     if value and role in value.split(','):
-                        hosts.append(instance.public_dns_name)
+                        hosts.append(instance.ip_address)
                         break
     return hosts
 
@@ -40,8 +40,9 @@ def main(argv):
     workload = int(argv[2])
     number_of_instances = int(argv[3])
     hosts = get_hosts()
-    # print hosts
     # hosts = ['127.0.0.1', ]
+    hosts = [config.master, ]
+    print hosts
     
     params = {'nRequests':(workload/(len(hosts))), 'setup':0}
     c = BenchmarkConfig(handle, **params)
