@@ -49,7 +49,7 @@ def main(argv):
     params = {'nRequests':(workload/(len(hosts)))}
     c = BenchmarkConfig(handle, **params)
 
-    msg = {'cmd':'start', 'workload':(workload / len(hosts))}
+    msg = {'cmd':'start', 'workload':(workload / number_of_instances)}
     writeBase = workload
     waits = []
 
