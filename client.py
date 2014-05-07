@@ -29,9 +29,9 @@ def main(argv):
 
     while True:
         connect, addr = s.accept()
-        print "receive request from %s" % str(addr)
+        # print "receive request from %s" % str(addr)
         raw_msg = connect.recv(config.receive_up)
-        print pickle.loads(raw_msg)
+        # print pickle.loads(raw_msg)
         msg = pickle.loads(raw_msg) # receive up to 2K bytes
         if 'cmd' not in msg:
             connect.send('unknown information')
