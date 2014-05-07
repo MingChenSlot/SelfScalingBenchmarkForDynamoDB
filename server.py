@@ -41,7 +41,7 @@ def main(argv):
     number_of_instances = int(argv[3])
     hosts = get_hosts()
     # print hosts
-    hosts = ['127.0.0.1', ]
+    # hosts = ['127.0.0.1', ]
     
     params = {'nRequests':(workload/(len(hosts))), 'setup':0}
     c = BenchmarkConfig(handle, **params)
@@ -79,7 +79,7 @@ def main(argv):
 
 def end_server():
     hosts = get_hosts()
-    hosts = ['127.0.0.1', ]
+    # hosts = ['127.0.0.1', ]
     msg = {'cmd':'end', }
     for host in hosts:
         try:
