@@ -4,7 +4,7 @@ from AccessMode import SimpleOpt
 from AccessMode import DataModel
 
 class BenchmarkConfig:
-    def __init__(self, handle, nRequests=1024, rSize=1024, setup=1):
+    def __init__(self, handle, nRequests=10000, rSize=2048, setup=1):
         self.recordSize = rSize # default record size
         self.nRequests = nRequests # default # of requests
 
@@ -28,7 +28,7 @@ class BenchmarkConfig:
         SimpleOpt.batch_put(self.handle, items)
 
 
-    def generate_benchmark(self, rRead=80, rWrite=20, rUpdate=0, rSize=1024, nRequests=1024, writeBase=0):
+    def generate_benchmark(self, rRead=50, rWrite=50, rUpdate=0, rSize=2048, nRequests=10000, writeBase=0):
         # All ratios are out of 100
         self.rRead = rRead
         self.rWrite = rWrite
