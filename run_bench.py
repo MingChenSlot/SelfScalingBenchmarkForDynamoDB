@@ -31,10 +31,10 @@ def main(args):
 
     c = BenchmarkConfig(handle)
 
-    # use read portion, write portion as parameters
+    # run1 use read portion, write portion as parameters
     for read in [0, 15, 35, 50, 75, 100]:
         write = 100 - read
-        params = {'rRead':read, 'rWrite':write, 'rUpdate':0}
+        params = {'rSize':2048, 'rRead':read, 'rWrite':write, 'rUpdate':0}
         c.generate_benchmark(**params)
     
         print
@@ -42,9 +42,9 @@ def main(args):
         c.run_benchmark()
         print
 
-    # use record size as parameter (512B, 1K, 2K, 4K, 8K)
+    # run2 use record size as parameter (512B, 1K, 2K, 4K, 8K)
     for size in [512, 1024, 2048, 4096, 8192]:
-        params = {'rSize':size}
+        params = {'rSize':size, 'rRead':50, 'rWrite':25, 'rUpdate':25}
         c.generate_benchmark(**params)
 
         print
