@@ -62,6 +62,7 @@ class BenchmarkConfig:
         nRequests = len(self.benchmark)
         begin = time.time()
         for op in self.benchmark:
+            print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
             if i%20 == 0:
                 print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
 

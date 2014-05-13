@@ -77,7 +77,7 @@ def main(argv):
 
     dt = time.time() - begin
     print 'final = %f' % dt
-    print 'throughput = %f KB/s' % ((1024 * workload) / 1024 / dt)
+    print 'throughput = %f KB/s' % ((2048 * workload) / 1024 / dt)
     
 
 def end_server():

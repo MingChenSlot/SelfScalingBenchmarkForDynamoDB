@@ -51,11 +51,15 @@ class SimpleOpt:
         print >>self.devnull, item['Item']['FileName'],
 
 
-    def update(self, keys, values):
+    # def update(self, keys, values):
+    def update(self, item):
         """
         @param keys a dict object representing attributes; must contain the primary key
         @param values a dict object representing attributes that need to be changed
         """
+        keys = {'PartitionID':item['PartitionID'], 'FileName':item['FileName']}
+        values = {'Data':item['Data'], 'Size':item['Size']}
+        
         keys = self.encode(keys)
         values = self.encode_attribs(values)
 

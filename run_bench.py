@@ -24,12 +24,17 @@ def main(args):
         config.table_name,
         conn=conn
     )
-    
+   
+
+    config = {'nRequests':100}
     # config = {'nRequests':1024}
-    config = {'nRequests':10000}
+    # config = {'nRequests':10000}
     c = BenchmarkConfig(handle, **config)
 
-    c = BenchmarkConfig(handle)
+    params = {'rRead':50, 'rWrite':25, 'rUpdate':25}
+    c.generate_benchmark(**params)
+    c.run_benchmark()
+    return
 
     # use read portion, write portion as parameters
     for read in [0, 15, 35, 50, 75, 100]:
