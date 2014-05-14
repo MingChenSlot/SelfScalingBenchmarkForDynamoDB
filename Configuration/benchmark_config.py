@@ -53,9 +53,7 @@ class BenchmarkConfig:
         self.recordSize = rSize
         for i in range(self.nRequests):
             item = DataModel.RecordInfo(self.recordSize, self.readBase+i).get_record_info()
-            SimpleOpt.update(self.handle,
-                    {'PartitionID':item['PartitionID'], 'FileName':item['FileName']},
-                    {'Data':item['Data'], 'Size':item['Size']})
+            SimpleOpt.update(self.handle, item)
 
     def run_benchmark(self):
         i = 0
