@@ -28,7 +28,7 @@ class BenchmarkConfig:
         SimpleOpt.batch_put(self.handle, items)
 
 
-    def generate_benchmark(self, rRead=50, rWrite=50, rUpdate=0, rSize=2048, nRequests=10000, writeBase=0):
+    def generate_benchmark(self, rRead=50, rWrite=25, rUpdate=25, rSize=2048, nRequests=10000, writeBase=0):
         # All ratios are out of 100
         self.rRead = rRead
         self.rWrite = rWrite
@@ -62,8 +62,8 @@ class BenchmarkConfig:
         nRequests = len(self.benchmark)
         begin = time.time()
         for op in self.benchmark:
-            if i%20 == 0:
-                print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
+            # if i%20 == 0:
+            #     print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
 
             if op in self.readSet:
                 item = DataModel.RecordInfo(self.recordSize, i + self.readBase).get_record_info()
@@ -86,8 +86,8 @@ class BenchmarkConfig:
         nRequests = len(self.benchmark)
         begin = time.time()
         for op in self.benchmark:
-            if i%20 == 0:
-                print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
+            # if i%20 == 0:
+            #     print '\b'*80, '%0.00f %%, t = %f' % (i*100.0/nRequests, time.time() - begin),
 
             if op in self.readSet:
                 item = DataModel.RecordInfo(self.recordSize, (i + self.readBase) % self.nRequests).get_record_info()
